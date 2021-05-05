@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 
 from coco.SegmentationDataset import SegmentationDataset
+from coco.trimap import makeEdgeMask
 
 datasetSize = 11
 
@@ -13,6 +14,7 @@ x_train, y_train = humanDataset.readBatch(datasetSize)
 for i in range(datasetSize):
     cv2.imshow("image", x_train[i])
     cv2.imshow("mask", y_train[i] * 255)
+    cv2.imshow("edge", makeEdgeMask(y_train[i]) * 255)
     cv2.waitKey()
 
 cv2.destroyAllWindows()
