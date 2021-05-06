@@ -1,4 +1,3 @@
-
 from torch.utils.data import Dataset
 from typing import Callable, List, Optional, Tuple, Union, Dict
 from pathlib import Path
@@ -37,12 +36,12 @@ class SegmentationDataset(Dataset):
         mask_pth = self.mask_names[index]
 
         frame =  cv2.imread(frame_pth)
-        frame = self.transform(frame)
+        frame = self.transform(frame).cuda()
 
         mask =  cv2.imread(mask_pth,cv2.IMREAD_GRAYSCALE)
-        trimap = torch.from_numpy(makeTrimap(mask))
+        trimap = torch.from_numpy(makeTrimap(mask)).float().cuda()
         mask = torch.from_numpy(mask)
-        mask = torch.unsqueeze(mask,0).float()
+        mask = torch.unsqueeze(mask,0).float().cuda()
 
         return frame, trimap, mask
 

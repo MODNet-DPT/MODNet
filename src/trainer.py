@@ -3,6 +3,8 @@ import scipy
 import numpy as np
 from scipy.ndimage import grey_dilation, grey_erosion
 
+from segmentation_models_pytorch.utils.functional import iou
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -170,8 +172,10 @@ def supervised_training_iter(
     loss.backward()
     optimizer.step()
 
+    semantic_iou = iou(pred_semantic, gt_semantic)
+
     # for test
-    return semantic_loss, detail_loss, matte_loss
+    return semantic_loss.item(), detail_loss.item(), matte_loss.item(), semantic_iou.item()
 
 
 def soc_adaptation_iter(
