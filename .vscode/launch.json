@@ -8,8 +8,8 @@
             "name": "Coco dataset demo",
             "type": "python",
             "request": "launch",
-            "module": "coco.datasetDemo",
-            "cwd": "${workspaceFolder}/src"
+            "module": "src.coco.datasetDemo",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

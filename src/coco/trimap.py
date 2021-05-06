@@ -9,8 +9,8 @@ def makeEdgeMask(mask, width):
 
     return dilation - erosion
 
-def makeTrimap(mask, width):
+def makeTrimap(mask, width = 5):
    edgeMask = makeEdgeMask(mask, width)
    trimap = mask.astype(np.float)
-   trimap[edgeMask[:, :] > 0] = 0.5
+   trimap[edgeMask == 1] = 0.5
    return trimap

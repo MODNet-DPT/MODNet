@@ -2,8 +2,8 @@ import os
 import cv2
 import numpy as np
 
-from coco.SegmentationDataset import SegmentationDataset
-from coco.trimap import makeTrimap
+from src.coco.SegmentationDataset import SegmentationDataset
+from src.coco.trimap import makeTrimap
 
 datasetSize = 11
 
