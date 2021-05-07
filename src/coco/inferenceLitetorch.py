@@ -8,7 +8,6 @@ from collections import OrderedDict
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input-path', type=str, help='path of input images')
-parser.add_argument('--output-path', type=str, help='path of output images')
 parser.add_argument('--ckpt-path', type=str, help='path of pre-trained MODNet')
 args = parser.parse_args()
 
