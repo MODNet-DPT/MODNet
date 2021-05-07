@@ -1,6 +1,7 @@
 from torch.utils.data import Dataset
 from typing import Callable, List, Optional, Tuple, Union, Dict
 from pathlib import Path
+import random
 import torch
 import os
 import cv2
@@ -11,29 +12,37 @@ import torchvision
 
 from src.coco.trimap import makeTrimap
 
-class SegmentationDataset(Dataset):
+class HumanSegmentationDataset(Dataset):
     """A custom Dataset(torch.utils.data) implement three functions: __init__, __len__, and __getitem__.
     Datasets are created from PTFDataModule.
     """
 
     def __init__(
             self,
-            frame_dir: Union[str, Path],
-            mask_dir: Union[str, Path]
+            dataset_dir: Union[str, Path],
+            human_size: int,
+            non_human_size: int
     ) -> None:
-
-        self.frame_dir = Path(frame_dir)
-        self.mask_dir = Path(mask_dir)
-        self.image_names = glob.glob(f"{self.frame_dir}/*.jpg")
-        self.mask_names = glob.glob(f"{self.mask_dir}/*.png")
+        self.dataset_dir = Path(dataset_dir)
+        self.human_size = human_size
+        self.non_human_size = non_human_size
+        self.indices = list(range(human_size + non_human_size))
+        random.shuffle(self.indices)
         self.transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize( mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        frame_pth = self.image_names[index]
-        mask_pth = self.mask_names[index]
+        datasetIndex = self.indices[index]
+        if datasetIndex >= self.human_size:
+            datasetIndex -= self.human_size
+
+            frame_pth = f"{self.dataset_dir}/nonHuman/image{datasetIndex}.jpg"
+            mask_pth = f"{self.dataset_dir}/nonHuman/mask{datasetIndex}.png"
+        else:
+            frame_pth = f"{self.dataset_dir}/human/image{datasetIndex}.jpg"
+            mask_pth = f"{self.dataset_dir}/human/mask{datasetIndex}.png"
 
         frame =  cv2.imread(frame_pth)
         frame = self.transform(frame).cuda()
@@ -46,4 +55,4 @@ class SegmentationDataset(Dataset):
         return frame, trimap, mask
 
     def __len__(self):
-        return len(self.image_names)
+        return self.human_size + self.non_human_size
