@@ -1,3 +1,4 @@
+import argparse
 import torch
 from torch.utils.data import DataLoader
 
@@ -6,6 +7,12 @@ from src.trainer import supervised_training_iter
 
 from src.coco.HumanSegmentationDatasetPytorch import HumanSegmentationDataset
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--dataset-path', type=str, help='path to dataset')
+parser.add_argument('--model-path', type=str, help='path to save trained MODNet')
+args = parser.parse_args()
+
+
 bs = 16         # batch size
 lr = 0.01       # learn rate
 epochs = 1000     # total epochs
@@ -13,7 +20,7 @@ modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
 optimizer = torch.optim.SGD(modnet.parameters(), lr=lr, momentum=0.9)
 lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1)
 
-dataset = HumanSegmentationDataset("dataset", 61600, 28320)
+dataset = HumanSegmentationDataset(args.dataset_path, 61600, 28320)
 dataloader = DataLoader(dataset)     # NOTE: please finish this function
 print(f'Dataset length: {dataset.__len__()}')
 
@@ -25,4 +32,4 @@ for epoch in range(0, epochs):
 
   lr_scheduler.step()
 
-torch.save(modnet.state_dict(), "data/modnet.ckpt")
+torch.save(modnet.state_dict(), args.model_path)
