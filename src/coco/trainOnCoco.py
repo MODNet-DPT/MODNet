@@ -20,7 +20,7 @@ modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
 optimizer = torch.optim.SGD(modnet.parameters(), lr=lr, momentum=0.9)
 lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1)
 
-dataset = HumanSegmentationDataset(args.dataset_path, 30800, 14160)
+dataset = HumanSegmentationDataset(args.dataset_path)
 dataloader = DataLoader(dataset)     # NOTE: please finish this function
 print(f'Dataset length: {dataset.__len__()}')
 

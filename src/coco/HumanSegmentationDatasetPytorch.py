@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 from typing import Callable, List, Optional, Tuple, Union, Dict
 from pathlib import Path
 import random
+import re
 import torch
 import os
 import cv2
@@ -20,29 +21,55 @@ class HumanSegmentationDataset(Dataset):
     def __init__(
             self,
             dataset_dir: Union[str, Path],
-            human_size: int,
-            non_human_size: int
     ) -> None:
         self.dataset_dir = Path(dataset_dir)
-        self.human_size = human_size
-        self.non_human_size = non_human_size
-        self.indices = list(range(human_size + non_human_size))
+
+        human_images = glob.glob(f"{self.dataset_dir}/human/image*.jpg")
+        human_masks = glob.glob(f"{self.dataset_dir}/human/mask*.png")
+        human_images, human_masks = self.filterNames(human_images, human_masks)
+
+        non_human_images = glob.glob(f"{self.dataset_dir}/nonHuman/image*.jpg")
+        non_human_masks = glob.glob(f"{self.dataset_dir}/nonHuman/mask*.png")
+        non_human_images, non_human_masks = self.filterNames(non_human_images, non_human_masks)
+        print(f"human_images {len(human_images)}, non_human_images {len(non_human_images)}")
+        print(f"human_masks {len(human_masks)}, non_human_masks {len(non_human_masks)}")
+        self.image_names = human_images + non_human_images
+        self.mask_names = human_masks + non_human_masks
+
+        self.dataset_size = min(len(self.image_names), len(self.mask_names))
+        print(f"dataset_size {self.dataset_size}")
+        self.indices = list(range(self.dataset_size))
         random.shuffle(self.indices)
+
         self.transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize( mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
+    def nameIndex(self, name: str):
+        match = re.search("(\\d+)", name)
+        return int(match.group(0))
+
+    def filterNames(self, imageNames, maskNames):
+        idToImage = {
+            self.nameIndex(name): name for name in imageNames
+        }
+
+        idToMask = {
+            self.nameIndex(name): name for name in maskNames
+        }
+
+        commonIndices = list(set(idToImage.keys()) & set(idToMask.keys()))
+
+        imageNames = [idToImage[index] for index in commonIndices]
+        maskNames = [idToMask[index] for index in commonIndices]
+
+        return imageNames, maskNames
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
         datasetIndex = self.indices[index]
-        if datasetIndex >= self.human_size:
-            datasetIndex -= self.human_size
 
-            frame_pth = f"{self.dataset_dir}/nonHuman/image{datasetIndex}.jpg"
-            mask_pth = f"{self.dataset_dir}/nonHuman/mask{datasetIndex}.png"
-        else:
-            frame_pth = f"{self.dataset_dir}/human/image{datasetIndex}.jpg"
-            mask_pth = f"{self.dataset_dir}/human/mask{datasetIndex}.png"
+        frame_pth = self.image_names[datasetIndex]
+        mask_pth = self.mask_names[datasetIndex]
 
         frame =  cv2.imread(frame_pth)
         frame = self.transform(frame).cuda()
@@ -55,4 +82,4 @@ class HumanSegmentationDataset(Dataset):
         return frame, trimap, mask
 
     def __len__(self):
-        return self.human_size + self.non_human_size
+        return self.dataset_size
