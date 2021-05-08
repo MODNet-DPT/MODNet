@@ -13,6 +13,6 @@ python3 -m src.coco.inference --input-path data/images/image1.jpg  --ckpt-path d
 !sudo dpkg -i yandex-disk_latest_amd64.deb
 !yandex-disk setup
 !yandex-disk sync
-!unzip ~/Yandex.Disk/data/MODNet_CocoDataset.zip -d /content/dataset
+!unzip -q ~/Yandex.Disk/data/MODNet_CocoDataset.zip -d /content/dataset
 ```
 
