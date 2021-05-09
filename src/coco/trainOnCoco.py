@@ -12,6 +12,7 @@ from src.trainer import supervised_training_iter
 
 from src.coco.HumanSegmentationDatasetPytorch import HumanSegmentationDataset
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 os.makedirs("logs", exist_ok=True)
 LOG_FILENAME = os.path.join("logs", "{}.log".format(__name__))
@@ -46,8 +47,8 @@ for epoch in range(0, epochs):
   if epoch % 10 == 0:
     logger.info("save model")
     torch.save(modnet.state_dict(), args.model_path)
-    shutil.copyfile(args.model_path, "/root/Yandex.Disk/data/")
-    shutil.copyfile(LOG_FILENAME, "/root/Yandex.Disk/data/")
+    shutil.copy(args.model_path, "/root/Yandex.Disk/data/")
+    shutil.copy(LOG_FILENAME, "/root/Yandex.Disk/data/")
     subprocess.run(["yandex-disk", "sync"])
     subprocess.run(["yandex-disk", "status"])
 
