@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "train on Coco",
+            "type": "python",
+            "request": "launch",
+            "module": "src.coco.trainOnCoco",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--dataset-path", "data/dataset/", "--model-path", "data/models/model.ckpt"
+            ]
+        },
+        {
             "name": "Coco dataset demo",
             "type": "python",
             "request": "launch",
