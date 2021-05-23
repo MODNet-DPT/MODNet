@@ -1,0 +1,7 @@
+version: "3.7"
+
+services:
+  modnet:
+    image: nvidia/cuda:11.3.0-runtime-ubuntu18.04
+    build: ./
+    
