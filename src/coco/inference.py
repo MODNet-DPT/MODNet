@@ -2,6 +2,8 @@ import cv2
 import argparse
 import torch
 import torchvision
+import numpy as np
+import cv2
 
 from src.models.modnet import MODNet
 
@@ -31,6 +33,8 @@ mask = mask.squeeze().cpu().detach().numpy()
 
 cv2.imshow("image", image)
 cv2.imshow("mask", mask)
+imageMask = cv2.merge([np.ones_like(mask) / 2, np.ones_like(mask) / 2, (mask + 1) / 2])
+cv2.imshow("masked", (image * imageMask).astype(np.uint8))
 cv2.waitKey(0)
 
 cv2.destroyAllWindows()
