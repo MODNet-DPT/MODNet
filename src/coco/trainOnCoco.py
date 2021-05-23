@@ -22,7 +22,7 @@ logger.addHandler(handler)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset-path', type=str, help='path to dataset')
-parser.add_argument('--model-path', type=str, help='path to save trained MODNet')
+parser.add_argument('--models-path', type=str, help='path to save trained MODNet models')
 args = parser.parse_args()
 
 
@@ -45,7 +45,7 @@ for epoch in range(0, epochs):
       logger.info(f'idx: {idx}, semantic_loss: {semantic_loss:.5f}, detail_loss: {detail_loss:.5f}, matte_loss: {matte_loss:.5f}, semantic_iou: {semantic_iou:.5f}')
   logger.info(f'Epoch: {epoch}, semantic_loss: {semantic_loss:.5f}, detail_loss: {detail_loss:.5f}, matte_loss: {matte_loss:.5f}, semantic_iou: {semantic_iou:.5f}')
   logger.info("save model")
-  torch.save(modnet.state_dict(), args.model_path)
+  torch.save(modnet.state_dict(), os.path.join(args.models_path, f"model_epoch{epoch}.ckpt"))
     # shutil.copy(args.model_path, "/root/Yandex.Disk/data/")
     # shutil.copy(LOG_FILENAME, "/root/Yandex.Disk/data/")
     # subprocess.run(["yandex-disk", "sync"])
@@ -53,4 +53,4 @@ for epoch in range(0, epochs):
 
   lr_scheduler.step()
 
-torch.save(modnet.state_dict(), args.model_path)
+torch.save(modnet.state_dict(), os.path.join(args.models_path, "model.ckpt"))
