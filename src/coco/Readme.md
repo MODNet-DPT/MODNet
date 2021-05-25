@@ -1,6 +1,6 @@
-# Usefull commands
+e# Usefull commands
 
-## Inference on traind model
+## Inference on trained model
 
 ```
 python3 -m src.coco.inference --input-path data/images/image1.jpg  --ckpt-path data/modnet.ckpt 
@@ -15,4 +15,9 @@ python3 -m src.coco.inference --input-path data/images/image1.jpg  --ckpt-path d
 !yandex-disk sync
 !unzip -q ~/Yandex.Disk/data/MODNet_CocoDataset.zip -d /content/dataset
 ```
+## Docker usage
 
+```
+docker build . -t modnet
+docker run modnet
+```
