@@ -26,7 +26,7 @@ parser.add_argument('--models-path', type=str, help='path to save trained MODNet
 args = parser.parse_args()
 
 
-bs = 8          # batch size
+bs = 16         # batch size
 lr = 0.01       # learn rate
 epochs = 1000     # total epochs
 modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()

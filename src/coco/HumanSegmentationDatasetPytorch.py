@@ -75,7 +75,8 @@ class HumanSegmentationDataset(Dataset):
         frame = self.transform(frame).cuda()
 
         mask =  cv2.imread(mask_pth,cv2.IMREAD_GRAYSCALE)
-        trimap = torch.from_numpy(makeTrimap(mask)).float().cuda()
+        trimap = torch.from_numpy(makeTrimap(mask))
+        trimap = torch.unsqueeze(trimap,0).float().cuda()
         mask = torch.from_numpy(mask)
         mask = torch.unsqueeze(mask,0).float().cuda()
 
