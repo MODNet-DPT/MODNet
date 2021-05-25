@@ -10,14 +10,14 @@ RUN apt install -y ffmpeg libsm6 libxext6
 RUN mkdir -p /opt/modnet
 WORKDIR /opt/modnet
 
-COPY ./src ./src
-COPY ./dockerRequirements.txt ./dockerRequirements.txt
-
 RUN mkdir data
 RUN mkdir data/dataset
 RUN pip3 install gdown
 RUN gdown https://drive.google.com/uc?id=13V2LoSz9PvO8M6rrm3QwoDGtGx02Zc_Z
 RUN unzip -q MODNet_CocoDataset.zip -d data/dataset/
+
+COPY ./src ./src
+COPY ./dockerRequirements.txt ./dockerRequirements.txt
 
 RUN pip3 install --user virtualenv
 RUN python3 -m venv /opt/modnet/env
