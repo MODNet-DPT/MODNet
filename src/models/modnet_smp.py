@@ -203,14 +203,14 @@ class FusionBranch(nn.Module):
 
 
 #------------------------------------------------------------------------------
-#  MODNetх
+#  MODNetx
 #------------------------------------------------------------------------------
 
 class MODNet(nn.Module):
     """ Architecture of MODNet
     """
 
-    def __init__(self, in_channels=3, hr_channels=32, backbone_arch='timm-efficientnet-b3', backbone_pretrained=True):
+    def __init__(self, in_channels=3, hr_channels=32, backbone_arch='timm-efficientnet-b3', pretrained_weights="noisy-student", backbone_pretrained=True):
         super(MODNet, self).__init__()
 
         self.in_channels = in_channels
@@ -218,7 +218,7 @@ class MODNet(nn.Module):
         self.backbone_arch = backbone_arch
         self.backbone_pretrained = backbone_pretrained
 
-        model = smp.FPN(encoder_name=backbone_arch, encoder_weights="noisy-student", in_channels=3)
+        model = smp.FPN(encoder_name=backbone_arch, encoder_weights=pretrained_weights, in_channels=3)
         self.backbone = model.encoder
         features = model.encoder(torch.ones([1, 3, 64, 64]))
         enc_channels = []
