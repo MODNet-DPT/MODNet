@@ -27,11 +27,11 @@ parser.add_argument('--models-path', type=str, help='path to save trained MODNet
 args = parser.parse_args()
 
 
-bs = 8         # batch size
+bs = 16         # batch size
 lr = 0.01       # learn rate
 epochs = 1000     # total epochs
-# modnet = torch.nn.DataParallel(MODNet(backbone_arch="resnet18", pretrained_weights="imagenet", backbone_pretrained=False)).cuda()
-modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
+modnet = torch.nn.DataParallel(MODNet(backbone_arch="resnet18", pretrained_weights="imagenet", backbone_pretrained=False)).cuda()
+# modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
 optimizer = torch.optim.SGD(modnet.parameters(), lr=lr, momentum=0.9)
 lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1)
 
