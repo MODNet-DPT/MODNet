@@ -29,4 +29,4 @@ RUN pip3 install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download
 RUN pip3 install -r dockerRequirements.txt
 
 RUN mkdir data/models
-CMD python3 -m src.coco.trainOnCoco --dataset-path data/dataset/ --models-path data/models/
+CMD python3 -m src.coco.trainOnCoco --dataset-path data/dataset/ --models-path data/models/ --batches 16

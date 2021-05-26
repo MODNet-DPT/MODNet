@@ -24,11 +24,12 @@ logger.addHandler(handler)
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset-path', type=str, help='path to dataset')
 parser.add_argument('--models-path', type=str, help='path to save trained MODNet models')
+parser.add_argument('--batches', type=int, default=1, help='batches count')
 args = parser.parse_args()
 
 
-bs = 16         # batch size
-lr = 0.01       # learn rate
+bs = args.batches # batch size
+lr = 0.01         # learn rate
 epochs = 1000     # total epochs
 modnet = torch.nn.DataParallel(MODNet(backbone_arch="resnet18", pretrained_weights="imagenet", backbone_pretrained=False)).cuda()
 # modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
