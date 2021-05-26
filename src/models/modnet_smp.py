@@ -122,7 +122,7 @@ class HRBranch(nn.Module):
     """ High Resolution Branch of MODNet
     """
 
-    def __init__(self, hr_channels, enc_channels):
+    def __init__(self, hr_channels, enc_channels, layerExtention):
         super(HRBranch, self).__init__()
 
         self.tohr_enc2x = Conv2dIBNormRelu(enc_channels[0], hr_channels, 1, stride=1, padding=0)
@@ -132,7 +132,7 @@ class HRBranch(nn.Module):
         self.conv_enc4x = Conv2dIBNormRelu(2 * hr_channels, 2 * hr_channels, 3, stride=1, padding=1)
 
         self.conv_hr4x = nn.Sequential(
-            Conv2dIBNormRelu(3 * hr_channels + 3 + 16, 2 * hr_channels, 3, stride=1, padding=1),
+            Conv2dIBNormRelu(3 * hr_channels + 3 + layerExtention, 2 * hr_channels, 3, stride=1, padding=1),
             Conv2dIBNormRelu(2 * hr_channels, 2 * hr_channels, 3, stride=1, padding=1),
             Conv2dIBNormRelu(2 * hr_channels, hr_channels, 3, stride=1, padding=1),
         )
@@ -225,9 +225,13 @@ class MODNet(nn.Module):
         for x in features[1:]:
             enc_channels.append(x.shape[1])
         print("enc_channels:",enc_channels)
+        layerExtention = {
+            "timm-efficientnet-b3": 16,
+            "resnet18": 96
+        }[backbone_arch]
 
         self.lr_branch = LRBranch(self.backbone,enc_channels)
-        self.hr_branch = HRBranch(self.hr_channels, enc_channels)
+        self.hr_branch = HRBranch(self.hr_channels, enc_channels, layerExtention)
         self.f_branch = FusionBranch(self.hr_channels, enc_channels)
 
         for m in self.modules():
