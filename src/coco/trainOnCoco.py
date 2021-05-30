@@ -22,8 +22,9 @@ handler = logging.handlers.RotatingFileHandler(
 logger.addHandler(handler)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset-path', type=str, help='path to dataset')
-parser.add_argument('--models-path', type=str, help='path to save trained MODNet models')
+parser.add_argument('--dataset-path', type=str, required=True, help='path to dataset')
+parser.add_argument('--models-path', type=str, required=True, help='path to save trained MODNet models')
+parser.add_argument('--ckpt-path', type=str, help='path of pre-trained MODNet')
 parser.add_argument('--batches', type=int, default=1, help='batches count')
 args = parser.parse_args()
 
@@ -33,6 +34,12 @@ lr = 0.01         # learn rate
 epochs = 1000     # total epochs
 modnet = torch.nn.DataParallel(MODNet(backbone_arch="resnet18", pretrained_weights="imagenet", backbone_pretrained=False)).cuda()
 # modnet = torch.nn.DataParallel(MODNet(backbone_pretrained=False)).cuda()
+
+if args.ckpt_path is not None:
+  modnet.load_state_dict(
+      torch.load(args.ckpt_path)
+  )
+
 optimizer = torch.optim.SGD(modnet.parameters(), lr=lr, momentum=0.9)
 lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1)
 
