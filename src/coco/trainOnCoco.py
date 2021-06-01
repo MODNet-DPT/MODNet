@@ -25,6 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset-path', type=str, required=True, help='path to dataset')
 parser.add_argument('--models-path', type=str, required=True, help='path to save trained MODNet models')
 parser.add_argument('--ckpt-path', type=str, help='path of pre-trained MODNet')
+parser.add_argument('--startEpoch', type=int, default=-1, help='epoch to start with')
 parser.add_argument('--batches', type=int, default=1, help='batches count')
 args = parser.parse_args()
 
@@ -41,7 +42,7 @@ if args.ckpt_path is not None:
   )
 
 optimizer = torch.optim.SGD(modnet.parameters(), lr=lr, momentum=0.9)
-lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1)
+lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(0.25 * epochs), gamma=0.1, last_epoch=args.startEpoch)
 
 dataset = HumanSegmentationDataset(args.dataset_path)
 dataloader = DataLoader(dataset, batch_size=bs)
